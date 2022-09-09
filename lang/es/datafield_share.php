@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'datafield_share', language 'en', branch 'master'
+ * Strings for component 'datafield_share', language 'es', branch 'master'
  *
  * @package    datafield
  * @subpackage share
@@ -24,10 +24,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Share';
-$string['fieldtypelabel'] = 'Share field';
-$string['privacy:metadata'] = 'The Share field component does not store any personal data, it uses tables defined in mod_data.';
-$string['mailmessagenew'] = 'Message when new';
-$string['mailmessage_help'] = 'Message to send to user when is linked to the record. Can use the special tags: {link}';
-$string['mailmessageedit'] = 'Message when edit';
-$string['subjectmail'] = 'Record in the data base';
+$string['pluginname'] = 'Compartir';
+$string['fieldtypelabel'] = 'Campo Compartir';
+$string['privacy:metadata'] = 'El campo Compartir no almacena datos personales, usa las tablas definidas para el módulo Base de datos.';
+$string['mailmessagenew'] = 'Mensaje para nuevas entradas';
+$string['mailmessage_help'] = 'Mensaje que se envía a los usuarios vinculados a las entradas.
+Se puede usar la etiqueta especial: {link}, que corresponde al enlace de la entrada en cuestión.
+Si el mensaje se deja vacío no se envía el correo.';
+$string['mailmessageedit'] = 'Mensaje al editar entradas';
+$string['subjectmail'] = 'Registro en la base de datos';

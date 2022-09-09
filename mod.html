@@ -12,9 +12,14 @@
         <td class="c1"><input class="requiredfield" type="checkbox" name="required" id="required" <?php p($this->field->required?"checked=\"checked\"":""); ?>/></td>
     </tr>
     <tr>
-        <td class="c0"><label for="param1"><?php echo get_string('mailmessage', 'datafield_share'); ?></label></td>
+        <td class="c0"><label for="param1"><?php echo get_string('mailmessagenew', 'datafield_share'); ?></label></td>
         <td class="c1"><textarea class="optionstextarea" name="param1" id="param1" cols="80" rows="10"><?php if($this->field->param1) {p($this->field->param1);} ?></textarea>
             <div class="small"><?php echo get_string('mailmessage_help', 'datafield_share'); ?></div>
+        </td>
+    </tr>
+    <tr>
+        <td class="c0"><label for="param2"><?php echo get_string('mailmessageedit', 'datafield_share'); ?></label></td>
+        <td class="c1"><textarea class="optionstextarea" name="param2" id="param2" cols="80" rows="10"><?php if($this->field->param2) {p($this->field->param2);} ?></textarea>
         </td>
     </tr>
 </table>

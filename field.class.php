@@ -49,7 +49,7 @@ class data_field_share extends data_field_base {
      * @param int $recordid
      * @return string
      */
-    function display_add_field($recordid=0, $formdata=null) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $DB, $OUTPUT, $PAGE, $COURSE;
 
         $fieldname = 'field_' . $this->field->id;
@@ -74,9 +74,31 @@ class data_field_share extends data_field_base {
         $attributes = [
             'ajax' => 'datafield_share/main',
             'multiple' => true,
-            'data-courseid' => $COURSE->id
+            'data-courseid' => $COURSE->id,
+            'valuehtmlcallback' => function($value) {
+                global $OUTPUT;
+
+                $allusernames = get_all_user_name_fields(true);
+                $fields = 'id, email, ' . $allusernames;
+                $user = \core_user::get_user($value, $fields);
+
+                if (!$user) {
+                    return;
+                }
+
+                $useroptiondata = [
+                    'fullname' => fullname($user),
+                    //'hasidentity' => true,
+                    'identity' => $user->email,
+                ];
+
+                return $OUTPUT->render_from_template('datafield_share/form-user-selector-suggestion', $useroptiondata);
+            }
         ];
-        $field = new MoodleQuickForm_autocomplete($fieldname, '', [],  $attributes);
+
+        $field = new MoodleQuickForm_autocomplete($fieldname, '', [], $attributes);
+
+        $field->setValue($content);
 
         $str .= $field->toHtml();
 
@@ -111,7 +133,7 @@ class data_field_share extends data_field_base {
     }
 
     public function parse_search_field($defaults = null) {
-        $param = 'f_'.$this->field->id;
+        $param = 'f_' . $this->field->id;
         if (empty($defaults[$param])) {
             $defaults = array($param => '');
         }
@@ -125,7 +147,7 @@ class data_field_share extends data_field_base {
         $i++;
         $name = "df_text_$i";
         return array(" ({$tablealias}.fieldid = {$this->field->id} AND " .
-                        $DB->sql_like("{$tablealias}.content", ":$name", false) . ") ",
+                        $DB->sql_like("{$tablealias}.content1", ":$name", false) . ") ",
                         array($name => "%$value%"));
     }
 
@@ -156,19 +178,45 @@ class data_field_share extends data_field_base {
     }
 
     function update_content($recordid, $value, $name='') {
-        global $DB;
+        global $DB, $data, $CFG, $USER;
 
         $content = new stdClass();
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = $this->format_data_field_share_content($value);
+        $content->content1 = strip_tags(self::get_content_value($content));
 
         if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             $content->id = $oldcontent->id;
-            return $DB->update_record('data_content', $content);
+            $res = $DB->update_record('data_content', $content);
+            $mailmessage = $this->field->param2;
         } else {
-            return $DB->insert_record('data_content', $content);
+            $res = $DB->insert_record('data_content', $content);
+            $mailmessage = $this->field->param1;
         }
+
+        if ($res && !empty($mailmessage)) {
+            $url = $CFG->wwwroot . '/mod/data/view.php?d=' . $data->id . '&rid=' . $recordid;
+            $subject = get_string('subjectmail', 'datafield_share') . ' ' . $data->name;
+            $messagehtml = str_replace('{link}', '<a href="' . $url . '">' . $url . '</a>', $mailmessage);
+            $messagetext = strip_tags($messagehtml);
+
+            $users = explode(',', $content->content);
+
+            foreach ($users as $userid) {
+
+                $fields = 'id, email';
+                $user = $DB->get_record('user', ['id' => $userid]);
+
+                if (!$user) {
+                    continue;
+                }
+
+                email_to_user($user, $USER, $subject, $messagetext, $messagehtml);
+            }
+        }
+
+        return $res;
     }
 
     function format_data_field_share_content($content) {
@@ -200,16 +248,59 @@ class data_field_share extends data_field_base {
      * @return string
      */
     public static function get_content_value($content) {
+        return self::get_content_readable($content);
+    }
+
+    /**
+     * Returns the presentable string value.
+     *
+     * @param stdClass $content
+     * @return string
+     */
+    private static function get_content_readable($content, $html = false) {
+        global $OUTPUT;
+
         $arr = explode(',', $content->content);
 
-        $strvalue = '';
+        $values = [];
         foreach ($arr as $a) {
-            $strvalue .= $a . ' ';
+
+            $allusernames = get_all_user_name_fields(true);
+            $fields = 'id, email, ' . $allusernames;
+            $user = \core_user::get_user($a, $fields);
+
+            if (!$user) {
+                continue;
+            }
+
+            if ($html) {
+                $useroptiondata = [
+                    'fullname' => fullname($user),
+                    //'hasidentity' => true,
+                    'identity' => $user->email,
+                    'profileurl' => new \moodle_url('/user/profile.php', array('id' => $user->id))
+                ];
+                $values[] = $OUTPUT->render_from_template('datafield_share/form-user-read', $useroptiondata);
+            } else {
+                $values[] = fullname($user);
+            }
         }
 
-        return trim($strvalue, "\r\n ");
+        return implode(($html ? '-' : ', '), $values);
+    }
+
+    // Display the content of the field in browse mode.
+    function display_browse_field($recordid, $template) {
+        global $DB;
+
+        if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+            return self::get_content_readable($content, true);
+        }
+        return false;
+    }
+
+    function export_text_value($record) {
+        return $record->content1;
     }
 
 }
-
-
