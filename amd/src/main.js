@@ -16,7 +16,6 @@
 /**
  * Javascript to field.
  *
- * @package    datafield
  * @subpackage share
  * @copyright  2022 David Herney @ BambuCo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
