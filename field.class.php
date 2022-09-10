@@ -186,13 +186,13 @@ class data_field_share extends data_field_base {
         $content->content = $this->format_data_field_share_content($value);
         $content->content1 = strip_tags(self::get_content_value($content));
 
-        if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+        $mailmessage = $this->field->param1;
+
+        if ($oldcontent = $DB->get_record('data_content', array('fieldid' => $this->field->id, 'recordid' => $recordid))) {
             $content->id = $oldcontent->id;
             $res = $DB->update_record('data_content', $content);
-            $mailmessage = $this->field->param2;
         } else {
             $res = $DB->insert_record('data_content', $content);
-            $mailmessage = $this->field->param1;
         }
 
         if ($res && !empty($mailmessage)) {
