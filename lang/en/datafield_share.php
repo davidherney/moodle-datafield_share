@@ -28,5 +28,6 @@ $string['pluginname'] = 'Share';
 $string['fieldtypelabel'] = 'Share field';
 $string['privacy:metadata'] = 'The Share field component does not store any personal data, it uses tables defined in mod_data.';
 $string['mailmessage'] = 'Message';
-$string['mailmessage_help'] = 'Message to send to user when is linked to the record. Can use the special tags: {link}';
+$string['mailmessage_help'] = 'Message to send to user when is linked to the record. Can use the special tags: {link}.
+If empty not mail is send.';
 $string['subjectmail'] = 'Record in the data base';
