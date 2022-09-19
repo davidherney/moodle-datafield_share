@@ -197,7 +197,7 @@ class data_field_share extends data_field_base {
 
         if ($res && !empty($mailmessage)) {
             $url = $CFG->wwwroot . '/mod/data/view.php?d=' . $data->id . '&rid=' . $recordid;
-            $subject = get_string('subjectmail', 'datafield_share') . ' ' . $data->name;
+            $subject = get_string('subjectmail', 'datafield_share', $data->name);
             $messagehtml = str_replace('{link}', '<a href="' . $url . '">' . $url . '</a>', $mailmessage);
             $messagetext = strip_tags($messagehtml);
 

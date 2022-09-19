@@ -30,4 +30,4 @@ $string['privacy:metadata'] = 'The Share field component does not store any pers
 $string['mailmessage'] = 'Message';
 $string['mailmessage_help'] = 'Message to send to user when is linked to the record. Can use the special tags: {link}.
 If empty not mail is send.';
-$string['subjectmail'] = 'Record in the data base';
+$string['subjectmail'] = 'Record in the data base: {$a}';
