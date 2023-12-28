@@ -3,7 +3,7 @@ Database field for Moodle: Share
 
 A data field type component to moodle. Share a record with specific users.
 
-Package tested in: moodle 3.10+
+Package tested in: moodle 3.11+
 
 QUICK INSTALL
 ==============

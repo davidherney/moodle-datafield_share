@@ -23,6 +23,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022090700;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2020110908;        // Requires this Moodle version
+$plugin->version   = 2022090700.01;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2021051708;        // Requires this Moodle version
 $plugin->component = 'datafield_share';  // Full name of the plugin (used for diagnostics)

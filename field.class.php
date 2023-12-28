@@ -78,8 +78,8 @@ class data_field_share extends data_field_base {
             'valuehtmlcallback' => function($value) {
                 global $OUTPUT;
 
-                $allusernames = get_all_user_name_fields(true);
-                $fields = 'id, email, ' . $allusernames;
+                $allusernames = \core_user\fields::get_name_fields(true);
+                $fields = 'id, email, ' . implode(',', $allusernames);
                 $user = \core_user::get_user($value, $fields);
 
                 if (!$user) {
@@ -177,7 +177,7 @@ class data_field_share extends data_field_base {
         return $configs;
     }
 
-    function update_content($recordid, $value, $name='') {
+    function update_content($recordid, $value, $name = '') {
         global $DB, $data, $CFG, $USER;
 
         $content = new stdClass();
@@ -205,7 +205,10 @@ class data_field_share extends data_field_base {
 
             foreach ($users as $userid) {
 
-                $fields = 'id, email';
+                if (empty($userid)) {
+                    continue;
+                }
+
                 $user = $DB->get_record('user', ['id' => $userid]);
 
                 if (!$user) {
@@ -265,8 +268,8 @@ class data_field_share extends data_field_base {
         $values = [];
         foreach ($arr as $a) {
 
-            $allusernames = get_all_user_name_fields(true);
-            $fields = 'id, email, ' . $allusernames;
+            $allusernames = \core_user\fields::get_name_fields(true);
+            $fields = 'id, email, ' . implode(',', $allusernames);
             $user = \core_user::get_user($a, $fields);
 
             if (!$user) {
@@ -299,6 +302,13 @@ class data_field_share extends data_field_base {
         return false;
     }
 
+    /**
+     * Returns the presentable string value for a field content.
+     * The returned string should be plain text.
+     *
+     * @param stdClass $record
+     * @return string
+     */
     function export_text_value($record) {
         return $record->content1;
     }
